@@ -1,13 +1,13 @@
 #[repr(u8)]
 #[derive(Debug, PartialEq)]
-pub enum Token {
+pub enum Token<'a> {
     Illegal(char),
     Eof,
 
     // Identifiers + literals
-    Ident(String),
+    Ident(&'a str),
     Int(i64),
-    String(String),
+    String(&'a str),
 
     // Operators
     Assign,

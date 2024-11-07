@@ -1,14 +1,14 @@
 pub mod token;
 pub use token::*;
 
-pub struct Lexer {
-    input: String,
+pub struct Lexer<'a> {
+    input: &'a str,
     pos: usize,
     read_pos: usize,
     ch: u8,
 }
 
-pub fn new(input: String) -> Lexer {
+pub fn new<'a>(input: &'a str) -> Lexer<'a> {
     let mut res = Lexer {
         input,
         pos: 0,
@@ -28,7 +28,7 @@ fn is_digit(ch: char) -> bool {
     '0' <= ch && ch <= '9'
 }
 
-impl Lexer {
+impl<'a> Lexer<'a> {
     /// Reads next character in input or stops
     fn read_char(&mut self) {
         if self.read_pos >= self.input.len() {
@@ -106,7 +106,7 @@ impl Lexer {
             ch => {
                 if is_letter(ch) {
                     let literal = self.read_identifier();
-                    return match literal.as_str() {
+                    return match literal {
                         "fn" => Token::Function,
                         "let" => Token::Let,
                         "true" => Token::True,
@@ -130,14 +130,13 @@ impl Lexer {
         tok
     }
 
-    pub fn read_identifier(&mut self) -> String {
+    pub fn read_identifier(&mut self) -> &'a str {
         let pos = self.pos;
         while is_letter(self.ch as char) {
             self.read_char();
         }
 
-        let lit = &self.input[pos..self.pos];
-        lit.into()
+        &self.input[pos..self.pos]
     }
 
     pub fn read_number(&mut self) -> i64 {
@@ -152,7 +151,7 @@ impl Lexer {
         lit.parse::<i64>().unwrap()
     }
 
-    pub fn read_string(&mut self) -> String {
+    pub fn read_string(&mut self) -> &'a str {
         let pos = self.pos + 1;
         loop {
             self.read_char();
@@ -162,8 +161,7 @@ impl Lexer {
             }
         }
 
-        let slice = &self.input[pos..self.pos];
-        slice.into()
+        &self.input[pos..self.pos]
     }
 }
 
@@ -174,30 +172,29 @@ fn test_next_token() {
             x + y
         };
 
-        "
-    .into();
+        ";
 
     let expects = vec![
         // Statement 1
         Token::Let,
-        Token::Ident("fifteen".into()),
+        Token::Ident("fifteen"),
         Token::Assign,
         Token::Int(15),
         Token::Semicolon,
         // Statement 2
         Token::Let,
-        Token::Ident("add".into()),
+        Token::Ident("add"),
         Token::Assign,
         Token::Function,
         Token::Lparen,
-        Token::Ident("x".into()),
+        Token::Ident("x"),
         Token::Comma,
-        Token::Ident("y".into()),
+        Token::Ident("y"),
         Token::Rparen,
         Token::Lbrace,
-        Token::Ident("x".into()),
+        Token::Ident("x"),
         Token::Plus,
-        Token::Ident("y".into()),
+        Token::Ident("y"),
         Token::Rbrace,
         Token::Semicolon,
         Token::Eof,
