@@ -8,7 +8,7 @@ pub struct Lexer<'a> {
     ch: u8,
 }
 
-pub fn new<'a>(input: &'a str) -> Lexer<'a> {
+pub fn new_lexer<'a>(input: &'a str) -> Lexer<'a> {
     let mut res = Lexer {
         input,
         pos: 0,
@@ -143,7 +143,6 @@ impl<'a> Lexer<'a> {
         let pos = self.pos;
         while is_digit(self.ch as char) {
             self.read_char();
-            println!("ch={}", self.ch as char);
         }
 
         let lit = &self.input[pos..self.pos];
@@ -200,7 +199,7 @@ fn test_next_token() {
         Token::Eof,
     ];
 
-    let mut lexer = new(input);
+    let mut lexer = new_lexer(input);
     for expected in expects {
         let tok = lexer.next_token();
         println!("{:?}", tok);

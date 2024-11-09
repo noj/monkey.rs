@@ -1,6 +1,7 @@
 mod lexer;
+mod parser;
+mod repl;
 
 fn main() {
-    let tok = lexer::Token::Let;
-    println!("{:?}", tok);
+    repl::start();
 }
