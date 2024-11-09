@@ -1,3 +1,3 @@
 # Rust implementation of the Monkey programming language
 
-Adapted to Rust from [Build an interpreter in Go](https://interpreterbook.com)
+Adapted to Rust from [Writing An Interpreter In Go](https://interpreterbook.com)
